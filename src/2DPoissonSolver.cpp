@@ -37,6 +37,7 @@ public:
     double lx, ly; // Dimensions of the Domain
     int nx, ny; // Node Counts
     double dx, dy; // Mesh Spacing
+    int Nunk;
 
     // Linear Alegbra Things
     Eigen::SparseMatrix<double, Eigen::RowMajor> A; // The A Matrix
@@ -53,6 +54,9 @@ public:
         // Compute Mesh Spacing
         this->dx = lx / (nx - 1);
         this->dy = ly / (ny - 1);
+
+        // Number of Unknowns
+        this->Nunk = (nx - 2) * (ny - 2);
     }
 
     // Square Mesh Spec.
@@ -239,7 +243,7 @@ public:
         solField.block(1, 1, Ny - 2, Nx - 2) = internalNodes;
     }
 
-    void solvesteady(double tol=1e-6) {
+    void solveSteady(double tol=1e-6) {
         // Setup Solver
         Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower | Eigen::Upper> cg;
         cg.setTolerance(tol);
@@ -255,23 +259,84 @@ public:
         // Save Output
         writer->writeVTRFile(solField, 0);
     }
+
+    double computeAutoTimestep(double sf = 0.8) {
+        double dt = 0.5 * sf * (mesh.dx * mesh.dx * mesh.dy * mesh.dy) / (mesh.dx * mesh.dx + mesh.dy * mesh.dy);
+        return dt;
+    }
+
+    void solveUnsteady(Eigen::VectorXd x, double finalTime, double dt, double write_freq, double tol=1e-6) {
+        // Adjust timestep if necessary
+        dt = (dt == 0) ? computeAutoTimestep() : dt;
+
+        // Convergence
+        Eigen::VectorXd r;
+        r.setConstant(0.0);
+        double bNorm = mesh.b.norm();
+
+        // Time stepping
+        int out_cnt = 0;
+        double lastWrite = 0.0;
+        for (double t = 0.0; t <= finalTime; t += dt) {
+            std::cout << "Timestepping: " << t << std::endl;
+
+            // Compute New Solution
+            solVec = x + dt * (mesh.A * x + mesh.b);
+
+            // Check Convergence
+            r = solVec - x;
+            double rNorm = r.norm();
+            if (rNorm / bNorm < tol) {
+                std::cout << "Problem Converged." << std::endl;
+                break;
+            }
+            else {
+                std::cout << "Current Residual: " << rNorm << std::endl;
+                x = solVec;
+            }
+
+            // Output 
+            if (t - lastWrite >= write_freq || t == 0) {
+                std::cout << "Writing output." << std::endl;
+
+                // Fill and Project
+                fillSolution();
+                setNeumannBCs();
+
+                // Write out
+                writer->writeVTRFile(solField, out_cnt);
+
+                // Update Counters
+                lastWrite = t;
+                out_cnt += 1;
+            }
+        }
+
+    }
 };
 
 int main()
 {
 
     // Create Some BCs
-    BoundaryConditions bcs(0, 0, 0, 0, 1, 0, 1, 0);
+    //                     N     S     E     W
+    BoundaryConditions bcs(1, 0, 1, 0, 0, 0, 0, 0);
 
     // Create a Mesh
-    Mesh mytestmesh(10.0, 100);
+    Mesh mytestmesh(10.0, 10);
     
     // Define the Problem
     Poisson2D problem(mytestmesh, bcs, -1.0);
 
     // Get the steady solution
-    std::cout << "Eigen's CG Solver: " << std::endl;
-    problem.solvesteady();
+    // std::cout << "Eigen's CG Solver: " << std::endl;
+    problem.solveSteady();
+
+    // Solve the Unsteady Problem
+    //double tFinal = 1000.0;
+    //Eigen::VectorXd x(mytestmesh.Nunk);
+    //x.setConstant(0.0);
+    //problem.solveUnsteady(x, tFinal, 0.0, 0.1);
 
     // Test the SOR Solver
     //Eigen::VectorXd x = Eigen::VectorXd::Zero(problem.mesh.A.rows());

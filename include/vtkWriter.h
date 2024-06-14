@@ -18,6 +18,7 @@ private:
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLElement* pointData;
     tinyxml2::XMLElement* dataArray;
+    std::string data_tabs = "\t\t\t\t\t";
 
     void createMetadata();
 

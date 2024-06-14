@@ -36,9 +36,9 @@ void VTRWriter::createMetadata() {
     xCoords->SetAttribute("Name", "X-Axis");
     xCoords->SetAttribute("format", "ascii");
     xCoords->SetAttribute("NumberOfComponents", "1");
-    std::string xValues;
+    std::string xValues = "\n";
     for (int i = 0; i < Ny; ++i) {
-        xValues += std::to_string(i * dy) + "\n";
+        xValues += data_tabs + std::to_string(i * dy) + "\n";
     }
     xCoords->SetText(xValues.c_str());
     coordinates->InsertEndChild(xCoords);
@@ -49,9 +49,9 @@ void VTRWriter::createMetadata() {
     yCoords->SetAttribute("Name", "Y-Axis");
     yCoords->SetAttribute("format", "ascii");
     yCoords->SetAttribute("NumberOfComponents", "1");
-    std::string yValues;
-    for (int j = 0; j < Nx; ++j) {
-        yValues += std::to_string(j * dx) + "\n";
+    std::string yValues = "\n";
+    for (int j = Nx-1; j >= 0; --j) {
+        yValues += data_tabs + std::to_string(j * dx) + "\n";
     }
     yCoords->SetText(yValues.c_str());
     coordinates->InsertEndChild(yCoords);
@@ -62,7 +62,9 @@ void VTRWriter::createMetadata() {
     zCoords->SetAttribute("Name", "Z-Axis");
     zCoords->SetAttribute("format", "ascii");
     zCoords->SetAttribute("NumberOfComponents", "1");
-    zCoords->SetText("0.0");
+    std::string zValues = "\n";
+    zValues += data_tabs + "0.0" + "\n";
+    zCoords->SetText(zValues.c_str());
     coordinates->InsertEndChild(zCoords);
 
     // Point Data
@@ -81,10 +83,10 @@ void VTRWriter::createMetadata() {
 
 void VTRWriter::writeVTRFile(const Eigen::MatrixXd& solField, int timestep) {
     // Create String of Scalar Values
-    std::string scalarValues;
+    std::string scalarValues = "\n";
     for (int i = 0; i < Nx; ++i) {
         for (int j = 0; j < Ny; ++j) {
-            scalarValues += std::to_string(solField(i, j)) + "\n";
+            scalarValues += data_tabs + std::to_string(solField(i, j)) + "\n";
         }
     }
 
