@@ -20,13 +20,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="external\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="src\BoundaryConditions.cpp" />
     <ClCompile Include="src\Diffusion2D.cpp" />
     <ClCompile Include="src\LinearSolvers.cpp" />
-    <ClCompile Include="src\vtkWriter.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\VTRWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\BoundaryConditions.h" />
+    <ClInclude Include="include\Diffusion2D.h" />
     <ClInclude Include="include\LinearSolvers.h" />
-    <ClInclude Include="include\vtkWriter.h" />
+    <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\VTRWriter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -103,6 +108,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>external\eigen-3.4.0;external\tinyxml2;include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -117,6 +123,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>external\eigen-3.4.0;external\tinyxml2;include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -129,6 +136,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>external\eigen-3.4.0;external\tinyxml2;include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,6 +145,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>external\eigen-3.4.0;external\tinyxml2;include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

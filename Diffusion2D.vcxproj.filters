@@ -4,10 +4,15 @@
     <ClCompile Include="src\Diffusion2D.cpp" />
     <ClCompile Include="src\LinearSolvers.cpp" />
     <ClCompile Include="external\tinyxml2\tinyxml2.cpp" />
-    <ClCompile Include="src\vtkWriter.cpp" />
+    <ClCompile Include="src\VTRWriter.cpp" />
+    <ClCompile Include="src\BoundaryConditions.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LinearSolvers.h" />
-    <ClInclude Include="include\vtkWriter.h" />
+    <ClInclude Include="include\VTRWriter.h" />
+    <ClInclude Include="include\Diffusion2D.h" />
+    <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\BoundaryConditions.h" />
   </ItemGroup>
 </Project>
