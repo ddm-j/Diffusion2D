@@ -3,7 +3,13 @@
 
 #include "Diffusion2D.h"
 
-Diffusion2D::Diffusion2D(Mesh mesh, const BoundaryConditions& bounds, double source, std::string name) : mesh(mesh), bounds(bounds) {
+#ifdef BUILD_PYTHON_BINDINGS
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/eigen.h>
+#endif
+
+Diffusion2D::Diffusion2D(Mesh& mesh, const BoundaryConditions& bounds, double source, std::string name) : mesh(mesh), bounds(bounds) {
     // Set the Mesh Settings for Access
     this->Nx = this->mesh.nx;
     this->Ny = this->mesh.ny;
@@ -100,7 +106,7 @@ double Diffusion2D::computeAutoTimestep(double sf) {
     return dt;
 }
 
-void Diffusion2D::solveUnsteady(Eigen::VectorXd x, double finalTime, double dt, double write_freq, double tol) {
+void Diffusion2D::solveUnsteady(Eigen::VectorXd &x, double finalTime, double dt, double write_freq, double tol) {
     // Adjust timestep if necessary
     dt = (dt == 0) ? computeAutoTimestep() : dt;
 
@@ -218,3 +224,31 @@ int main()
 
 }
 
+#ifdef BUILD_PYTHON_BINDINGS
+namespace py = pybind11;
+
+PYBIND11_MODULE(Diffusion2D, m) {
+    // Boundary Condition Class
+    py::class_<BoundaryConditions>(m, "BoundaryConditions")
+        .def(py::init<int, double, int, double, int, double, int, double>());
+
+    // Mesh Class
+    py::class_<Mesh>(m, "Mesh")
+        .def(py::init<double, double, int, int>())
+        .def_readonly("Nunk", &Mesh::Nunk)
+        .def_readonly("nx", &Mesh::nx)
+        .def_readonly("ny", &Mesh::ny);
+
+    // Problem Class
+    py::class_<Diffusion2D>(m, "Diffusion2D")
+        .def(py::init<Mesh&, const BoundaryConditions&, double, std::string>())
+        .def("solveSteady", &Diffusion2D::solveSteady,
+            py::arg("tol") = 1e-6)
+        .def("solveUnsteady",
+            py::overload_cast<Eigen::VectorXd&, double, double, double, double>(&Diffusion2D::solveUnsteady),
+            py::arg("x"), py::arg("finalTime"), py::arg("dt"), py::arg("write_freq"), py::arg("tol") = 1e-6)
+        .def_readonly("solField", &Diffusion2D::solField)
+        .def_readonly("solVec", &Diffusion2D::solVec);
+};
+
+#endif

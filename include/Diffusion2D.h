@@ -26,7 +26,7 @@ public:
     int Ny;
 
     // Constructor
-    Diffusion2D(Mesh mesh, const BoundaryConditions& bounds, double source, std::string name);
+    Diffusion2D(Mesh& mesh, const BoundaryConditions& bounds, double source, std::string name);
 
     // Class Methods
     void setDirichletBCs();
@@ -39,7 +39,7 @@ public:
 
     double computeAutoTimestep(double sf = 0.8);
 
-    void solveUnsteady(Eigen::VectorXd x, double finalTime, double dt, double write_freq, double tol = 1e-6);
+    void solveUnsteady(Eigen::VectorXd& x, double finalTime, double dt, double write_freq, double tol = 1e-6);
 
     void solveUnsteady(double finalTime, double dt, double write_freq, double tol = 1e-6);
 };

@@ -9,6 +9,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		PythonBindings|x64 = PythonBindings|x64
+		PythonBindings|x86 = PythonBindings|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
@@ -17,6 +19,10 @@ Global
 		{30067C79-C1A6-4883-B759-F88C6C509D60}.Debug|x64.Build.0 = Debug|x64
 		{30067C79-C1A6-4883-B759-F88C6C509D60}.Debug|x86.ActiveCfg = Debug|Win32
 		{30067C79-C1A6-4883-B759-F88C6C509D60}.Debug|x86.Build.0 = Debug|Win32
+		{30067C79-C1A6-4883-B759-F88C6C509D60}.PythonBindings|x64.ActiveCfg = PythonBindings|x64
+		{30067C79-C1A6-4883-B759-F88C6C509D60}.PythonBindings|x64.Build.0 = PythonBindings|x64
+		{30067C79-C1A6-4883-B759-F88C6C509D60}.PythonBindings|x86.ActiveCfg = PythonBindings|Win32
+		{30067C79-C1A6-4883-B759-F88C6C509D60}.PythonBindings|x86.Build.0 = PythonBindings|Win32
 		{30067C79-C1A6-4883-B759-F88C6C509D60}.Release|x64.ActiveCfg = Release|x64
 		{30067C79-C1A6-4883-B759-F88C6C509D60}.Release|x64.Build.0 = Release|x64
 		{30067C79-C1A6-4883-B759-F88C6C509D60}.Release|x86.ActiveCfg = Release|Win32
