@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="external\tinyxml2\tinyxml2.cpp" />
-    <ClCompile Include="src\2DPoissonSolver.cpp" />
+    <ClCompile Include="src\Diffusion2D.cpp" />
     <ClCompile Include="src\LinearSolvers.cpp" />
     <ClCompile Include="src\vtkWriter.cpp" />
   </ItemGroup>
@@ -130,6 +130,9 @@
     <ClCompile>
       <AdditionalIncludeDirectories>external\eigen-3.4.0;external\tinyxml2;include</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

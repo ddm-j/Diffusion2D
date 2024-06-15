@@ -69,7 +69,7 @@ public:
         // Size the Matrix Accordingly
         int N = (this->nx - 2) * (this->ny - 2);
         this->A.resize(N, N);
-        this->b.setConstant(N, f);
+        this->b.setConstant(N, -f);
 
         // Useful Variables
         int xe = nx - 1;
@@ -159,7 +159,7 @@ public:
 
 };
 
-class Poisson2D {
+class Diffusion2D {
 public:
     Mesh mesh;
     BoundaryConditions bounds;
@@ -173,7 +173,7 @@ public:
     int Nx;
     int Ny;
 
-    Poisson2D(Mesh mesh, const BoundaryConditions& bounds, double source) : mesh(mesh), bounds(bounds) {
+    Diffusion2D(Mesh mesh, const BoundaryConditions& bounds, double source, std::string name) : mesh(mesh), bounds(bounds) {
         // Set the Mesh Settings for Access
         this->Nx = this->mesh.nx;
         this->Ny = this->mesh.ny;
@@ -190,7 +190,7 @@ public:
         this->setDirichletBCs();
 
         // Initialize the VTR Writer
-        writer = new VTRWriter(Nx, Ny, this->mesh.dx, this->mesh.dy, "poisson");
+        writer = new VTRWriter(Nx, Ny, this->mesh.dx, this->mesh.dy, name);
     }
 
     void setDirichletBCs() {
@@ -222,16 +222,21 @@ public:
 
                 switch (i) {
                 case 0: // North
+                    std::cout << "Setting North Neumann" << std::endl;
                     solField.block(0, 0, 1, Nx) = solField.block(1, 0, 1, Nx).array() + g;
-                
+                    break;
                 case 1: // South
+                    std::cout << "Setting South Neumann" << std::endl;
                     solField.block(Ny - 1, 0, 1, Nx) = solField.block(Ny - 2, 0, 1, Nx).array() - g;
-
+                    break;
                 case 2: // East
+                    std::cout << "Setting East Neumann" << std::endl;
                     solField.block(0, Nx - 1, Ny, 1) = solField.block(0, Nx - 2, Ny, 1).array() + g;
-
+                    break;
                 case 3: // West
+                    std::cout << "Setting West Neumann" << std::endl;
                     solField.block(0, 0, Ny, 1) = solField.block(0, 1, Ny, 1).array() - g;
+                    break;
                 }
             }
         }
@@ -252,7 +257,7 @@ public:
         // Solve
         solVec = cg.solve(mesh.b);
         fillSolution();
-
+        std::cout << solField << std::endl;
         // Project Neumann BC
         setNeumannBCs();
 
@@ -281,7 +286,7 @@ public:
             std::cout << "Timestepping: " << t << std::endl;
 
             // Compute New Solution
-            solVec = x + dt * (mesh.A * x + mesh.b);
+            solVec = x + dt * (mesh.A * x - mesh.b);
 
             // Check Convergence
             r = solVec - x;
@@ -320,17 +325,20 @@ int main()
 
     // Create Some BCs
     //                     N     S     E     W
-    BoundaryConditions bcs(1, 0, 1, 0, 0, 0, 0, 0);
+    BoundaryConditions bcs(0, 1, 0, 1, 1, 0, 1, 0);
 
     // Create a Mesh
-    Mesh mytestmesh(10.0, 10);
+    Mesh mytestmesh(10.0, 6);
     
     // Define the Problem
-    Poisson2D problem(mytestmesh, bcs, -1.0);
+    Diffusion2D problem(mytestmesh, bcs, -1.0, "steady");
+
+    std::cout << problem.solField << std::endl;
 
     // Get the steady solution
-    // std::cout << "Eigen's CG Solver: " << std::endl;
     problem.solveSteady();
+
+    std::cout << problem.solField << std::endl;
 
     // Solve the Unsteady Problem
     //double tFinal = 1000.0;
