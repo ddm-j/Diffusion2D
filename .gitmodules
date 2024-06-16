@@ -4,3 +4,6 @@
 [submodule "external/pybind11"]
 	path = external/pybind11
 	url = https://github.com/pybind/pybind11.git
+[submodule "external/LuaJIT"]
+	path = external/LuaJIT
+	url = https://github.com/LuaJIT/LuaJIT.git
