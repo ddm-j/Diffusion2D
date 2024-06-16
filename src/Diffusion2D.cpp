@@ -1,8 +1,9 @@
-// 2DPoissonSolver.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// 2DPoissonSolver.cpp : A Rectilinear Solver for 2D Diffusion Equations
 //
 
 #include "Diffusion2D.h"
 
+// Pybind11 isht
 #ifdef BUILD_PYTHON_BINDINGS
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -168,59 +169,52 @@ int main()
 
     // Create Some BCs
     //                     N     S     E     W
-    BoundaryConditions bcs(0, 1, 0, 0, 0, 0, 0, 1);
+    //BoundaryConditions bcs(0, 1, 0, 0, 0, 0, 0, 1);
 
     // Create a Mesh
-    Mesh mytestmesh(10.0, 100);
+    //Mesh mytestmesh(10.0, 100);
     
     // Define the Problem
-    Diffusion2D problem(mytestmesh, bcs, 0.0, "unsteady");
+    //Diffusion2D problem(mytestmesh, bcs, 0.0, "unsteady");
 
     // Get the steady solution
     // problem.solveSteady();
 
     // Solve the Unsteady Problem
-    double tFinal = 1000.0;
+    //double tFinal = 1000.0;
     //Eigen::VectorXd x(mytestmesh.Nunk);
     //x.setConstant(0.0);
-    problem.solveUnsteady(tFinal, 0.0, 0.1);
+    //problem.solveUnsteady(tFinal, 0.0, 0.1);
 
-    // Test the SOR Solver
-    //Eigen::VectorXd x = Eigen::VectorXd::Zero(problem.mesh.A.rows());
-    //sparseSuccessiveOverRelaxation(problem.mesh.A, problem.mesh.b, x, 1.7, 1e-6);
-    //std::cout << "My SOR Solver: ";
-    //std::cout << x.transpose() << std::endl;
+    // Testing Lua!
+    // An example function
+    float a = 4.0;
+    float b = 2.0;
 
-    //// Create a 5x5 sparse matrix
-    //Eigen::SparseMatrix<double, Eigen::RowMajor> mat(5, 5);
+    std::string script_path = "myscript.lua";
 
-    //// Fill the matrix with some values for demonstration
-    //mat.insert(0, 1) = 10;  // mat(0,1) = 10
-    //mat.insert(1, 2) = 20;  // mat(1,2) = 20
-    //mat.insert(2, 3) = 30;  // mat(2,3) = 30
-    //mat.insert(3, 4) = 40;  // mat(3,4) = 40
-    //mat.insert(4, 0) = 50;  // mat(4,0) = 50
+    lua_State* L = luaL_newstate();
+    luaL_dofile(L, script_path.c_str());
+    lua_getglobal(L, "Pythagoras");
+    if (lua_isfunction(L, -1)) {
+        std::cout << "LUA File is a Function" << std::endl;
+        // Push Function arguments onto the stack left to right (on the Lua function signature)
+        lua_pushnumber(L, a);
+        lua_pushnumber(L, b);
 
-    //// Finalize matrix assembly
-    ////mat.makeCompressed();
+        // Lua Function call requirements
+        constexpr int NUM_ARGS = 2;
+        constexpr int NUM_RETURNS = 1;
 
-    //Eigen::MatrixXd denseMat = Eigen::MatrixXd(mat);
-    //std::cout << denseMat << std::endl;
+        // Call the function
+        lua_pcall(L, NUM_ARGS, NUM_RETURNS, 0);
+        lua_Number lua_ret = lua_tonumber(L, -1);
+        float c_sq = (float)lua_ret;
 
-    //// Iterate over all elements in the matrix
-    //int cnt = 0;
-    //for (int k = 0; k < mat.outerSize(); ++k) {
-    //    for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(mat, k); it; ++it) {
-    //        // it.row()       -- row index
-    //        // it.col()       -- column index
-    //        // it.value()     -- value of the element
-    //        std::cout << "Element (" << it.row() << "," << it.col() << ") = " << it.value() << std::endl;
-    //        ++cnt;
-    //    }
-    //}
-    //std::cout << "Total iterations: " << cnt << ". Out of " << mat.rows() * mat.cols() << " possible iterations." << std::endl;
+        std::cout << "Result of Lua Function: " << c_sq << std::endl;
+    }
+    lua_close(L);
 
-    //return 0;
 
 }
 

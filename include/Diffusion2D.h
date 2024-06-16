@@ -9,6 +9,7 @@
 #include "VTRWriter.h"
 #include "BoundaryConditions.h"
 #include "Mesh.h"
+#include "lua.hpp"
 
 
 class Diffusion2D {
