@@ -106,7 +106,7 @@ double Diffusion2D::computeAutoTimestep(double sf) {
     return dt;
 }
 
-void Diffusion2D::solveUnsteady(Eigen::VectorXd &x, double finalTime, double dt, double write_freq, double tol) {
+void Diffusion2D::solveUnsteady(Eigen::Ref<Eigen::VectorXd> x, double finalTime, double dt, double write_freq, double tol) {
     // Adjust timestep if necessary
     dt = (dt == 0) ? computeAutoTimestep() : dt;
 
@@ -245,7 +245,7 @@ PYBIND11_MODULE(Diffusion2D, m) {
         .def("solveSteady", &Diffusion2D::solveSteady,
             py::arg("tol") = 1e-6)
         .def("solveUnsteady",
-            py::overload_cast<Eigen::VectorXd&, double, double, double, double>(&Diffusion2D::solveUnsteady),
+            py::overload_cast<Eigen::Ref<Eigen::VectorXd>, double, double, double, double>(&Diffusion2D::solveUnsteady),
             py::arg("x"), py::arg("finalTime"), py::arg("dt"), py::arg("write_freq"), py::arg("tol") = 1e-6)
         .def_readonly("solField", &Diffusion2D::solField)
         .def_readonly("solVec", &Diffusion2D::solVec);
