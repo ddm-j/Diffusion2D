@@ -14,20 +14,23 @@
 
 class Diffusion2D {
 public:
-    Mesh mesh;
-    BoundaryConditions bounds;
+    Mesh* mesh = nullptr;
+    BoundaryConditions* bounds = nullptr;
     VTRWriter* writer;
 
     // Solution Vector and Field
     Eigen::VectorXd solVec;
     Eigen::MatrixXd solField;
 
+    // Source Term
+    double source;
+
     // Mesh Setting
     int Nx;
     int Ny;
 
     // Constructor
-    Diffusion2D(Mesh& mesh, const BoundaryConditions& bounds, double source, std::string name);
+    Diffusion2D(Mesh* mesh, BoundaryConditions* bounds, double source, std::string name);
 
     // Class Methods
     void setDirichletBCs();

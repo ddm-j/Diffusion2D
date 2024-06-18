@@ -5,6 +5,14 @@
 #include "BoundaryConditions.h"
 
 class Mesh {
+private:
+    BoundaryConditions* bounds = nullptr;
+    double ax, ay;
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>* b_matrix;
+
+
+    void updateBoundary(const double source, const int face_index);
+
 public:
     // Mesh Dimensions
     double lx, ly; // Dimensions of the Domain
@@ -24,6 +32,6 @@ public:
 
 
     // Class Methods
-    void initializeMatrix(const BoundaryConditions bounds, double f);
-
+    void initializeMatrix(BoundaryConditions* bounds, double f);
+    void updateBoundaries(const double source);
 };
