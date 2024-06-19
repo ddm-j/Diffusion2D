@@ -10,3 +10,4 @@ bin/
 py/*
 !py/*.py
 !py/*.ipynb
+!py/*.lua

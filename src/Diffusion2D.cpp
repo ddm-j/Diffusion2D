@@ -183,11 +183,11 @@ int main()
     //                     N     S     E     W
     //BoundaryConditions bcs(0, 1, 0, 0, 0, 0, 0, 1);
     BoundaryConditions bcs;
-    bcs.addBC('N', 2, "example_udf", "udf1.lua");
+    bcs.addBC('N', 0, 0);
     //bcs.addBC('N', 0, 1);
     bcs.addBC('S', 0, 0);
     bcs.addBC('E', 0, 0);
-    bcs.addBC('W', 2, "example_udf2", "udf2.lua");
+    bcs.addBC('N', 2, "example_udf", "udf1.lua");
 
     std::cout << "Boundary Conditions: " << bcs.bcs << std::endl;
     std::cout << "Boundary Values: " << bcs.bcvs << std::endl;
@@ -246,7 +246,11 @@ namespace py = pybind11;
 PYBIND11_MODULE(Diffusion2D, m) {
     // Boundary Condition Class
     py::class_<BoundaryConditions>(m, "BoundaryConditions")
-        .def(py::init<int, double, int, double, int, double, int, double>());
+        .def(py::init<>())
+        .def("addBC", py::overload_cast<char, const int, const double>(&BoundaryConditions::addBC),
+             py::arg("face"), py::arg("type"), py::arg("value"))
+        .def("addBC", py::overload_cast<char, const int, const std::string, const std::string>(&BoundaryConditions::addBC),
+             py::arg("face"), py::arg("type"), py::arg("funcName"), py::arg("UDF"));
 
     // Mesh Class
     py::class_<Mesh>(m, "Mesh")
@@ -257,7 +261,7 @@ PYBIND11_MODULE(Diffusion2D, m) {
 
     // Problem Class
     py::class_<Diffusion2D>(m, "Diffusion2D")
-        .def(py::init<Mesh&, const BoundaryConditions&, double, std::string>())
+        .def(py::init<Mesh*, BoundaryConditions*, double, std::string>())
         .def("solveSteady", &Diffusion2D::solveSteady,
             py::arg("tol") = 1e-6)
         .def("solveUnsteady",
